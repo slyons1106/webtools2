@@ -5,6 +5,7 @@ const Page2: React.FC = () => {
     <div>
       <h1>Page 2</h1>
       <p>This is page 2. It is accessible to all logged-in users.</p>
+      <img src="https://placehold.co/400x200?text=Page+2" alt="Page 2 Placeholder" />
     </div>
   );
 };
