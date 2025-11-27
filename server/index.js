@@ -60,22 +60,23 @@ const authorize = (requiredRole) => (req, res, next) => {
   }
 };
 
-// Public API route
+// API routes are defined first
 app.get('/api/public', (req, res) => {
   res.json({ message: 'This is public data.' });
 });
 
-// Protected Admin API route
 app.get('/api/admin', authorize('ADMIN'), (req, res) => {
   res.json({ message: 'This is admin-only data.', user: req.user });
 });
 
-// Serve client static files in production
+// Serve client static files and handle SPA routing in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/dist'));
+  // Serve the static files from the React app
+  app.use(express.static(path.join(__dirname, '../client/dist')));
 
+  // Handles any requests that don't match the ones above
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../client', 'dist', 'index.html'));
+    res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
   });
 }
 
