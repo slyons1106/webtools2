@@ -1,6 +1,10 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -15,7 +19,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Mock Login Endpoint
-app.post('/login', (req, res) => {
+app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   const user = users.find(u => u.username === username && u.password === password);
 
@@ -30,7 +34,7 @@ app.post('/login', (req, res) => {
 });
 
 // Endpoint to check authentication status and role
-app.get('/check-auth', (req, res) => {
+app.get('/api/check-auth', (req, res) => {
   const userRole = req.cookies.role;
   if (userRole) {
     res.status(200).json({ isAuthenticated: true, role: userRole });
@@ -40,7 +44,7 @@ app.get('/check-auth', (req, res) => {
 });
 
 // Logout Endpoint
-app.post('/logout', (req, res) => {
+app.post('/api/logout', (req, res) => {
   res.clearCookie('role');
   res.status(200).json({ message: 'Logout successful' });
 });

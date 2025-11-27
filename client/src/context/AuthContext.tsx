@@ -21,7 +21,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await fetch('/check-auth');
+      const response = await fetch('/api/check-auth');
       if (response.ok) {
         const data = await response.json();
         setIsAuthenticated(data.isAuthenticated);
@@ -50,7 +50,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      await fetch('/logout', { method: 'POST' });
+      await fetch('/api/logout', { method: 'POST' });
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
