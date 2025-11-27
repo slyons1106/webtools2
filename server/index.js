@@ -69,14 +69,17 @@ app.get('/api/admin', authorize('ADMIN'), (req, res) => {
   res.json({ message: 'This is admin-only data.', user: req.user });
 });
 
-// Serve client static files and handle SPA routing in production
+// Production-specific logic
 if (process.env.NODE_ENV === 'production') {
-  // Serve the static files from the React app
-  app.use(express.static(path.join(__dirname, '../client/dist')));
+  const clientBuildPath = path.join(__dirname, '../client/dist');
+  
+  // Serve static files from the React app
+  app.use(express.static(clientBuildPath));
 
-  // Handles any requests that don't match the ones above
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+  // The "catchall" handler: for any request that doesn't match one above,
+  // send back React's index.html file.
+  app.get('/*', (req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
   });
 }
 
