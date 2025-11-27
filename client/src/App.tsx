@@ -8,7 +8,7 @@ import Page3 from './pages/Page3';
 import Page4 from './pages/Page4';
 import Page5 from './pages/Page5';
 import Page6 from './pages/Page6';
-import { AuthProvider, AuthContext } from './context/AuthContext';
+import { AuthContext } from './context/AuthContext'; // Only AuthContext is needed now
 import ProtectedRoute from './components/ProtectedRoute';
 import { useContext } from 'react';
 import './App.css';
@@ -39,6 +39,7 @@ const AuthStatus: React.FC = () => {
 };
 
 function App() {
+  // AuthContext is consumed here for conditional rendering of menu items
   const auth = useContext(AuthContext);
 
   if (!auth) {
@@ -46,107 +47,105 @@ function App() {
   }
 
   return (
-    <AuthProvider>
-      <div className="App">
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/admin">Admin</Link>
-            </li>
-            <li>
-              <Link to="/page1">Page 1</Link>
-            </li>
-            <li>
-              <Link to="/page2">Page 2</Link>
-            </li>
-            <li>
-              <Link to="/page3">Page 3</Link>
-            </li>
-            {auth.isAuthenticated && auth.role === 'ADMIN' && (
-              <>
-                <li>
-                  <Link to="/page4">Page 4</Link>
-                </li>
-                <li>
-                  <Link to="/page5">Page 5</Link>
-                </li>
-                <li>
-                  <Link to="/page6">Page 6</Link>
-                </li>
-              </>
-            )}
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
-          </ul>
-          <AuthStatus />
-        </nav>
+    <div className="App">
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/admin">Admin</Link>
+          </li>
+          <li>
+            <Link to="/page1">Page 1</Link>
+          </li>
+          <li>
+            <Link to="/page2">Page 2</Link>
+          </li>
+          <li>
+            <Link to="/page3">Page 3</Link>
+          </li>
+          {auth.isAuthenticated && auth.role === 'ADMIN' && (
+            <>
+              <li>
+                <Link to="/page4">Page 4</Link>
+              </li>
+              <li>
+                <Link to="/page5">Page 5</Link>
+              </li>
+              <li>
+                <Link to="/page6">Page 6</Link>
+              </li>
+            </>
+          )}
+          <li>
+            <Link to="/login">Login</Link>
+          </li>
+        </ul>
+        <AuthStatus />
+      </nav>
 
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute adminOnly={true}>
-                <AdminPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/page1"
-            element={
-              <ProtectedRoute>
-                <Page1 />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/page2"
-            element={
-              <ProtectedRoute>
-                <Page2 />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/page3"
-            element={
-              <ProtectedRoute>
-                <Page3 />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/page4"
-            element={
-              <ProtectedRoute adminOnly={true}>
-                <Page4 />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/page5"
-            element={
-              <ProtectedRoute adminOnly={true}>
-                <Page5 />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/page6"
-            element={
-              <ProtectedRoute adminOnly={true}>
-                <Page6 />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </div>
-    </AuthProvider>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/page1"
+          element={
+            <ProtectedRoute>
+              <Page1 />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/page2"
+          element={
+            <ProtectedRoute>
+              <Page2 />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/page3"
+          element={
+            <ProtectedRoute>
+              <Page3 />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/page4"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <Page4 />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/page5"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <Page5 />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/page6"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <Page6 />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </div>
   );
 }
 
