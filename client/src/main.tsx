@@ -7,10 +7,10 @@ import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <AuthProvider> {/* Wrap App with AuthProvider */}
+    <AuthProvider> {/* Wrap BrowserRouter with AuthProvider */}
+      <BrowserRouter>
         <App />
-      </AuthProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthProvider>
   </StrictMode>,
 )
