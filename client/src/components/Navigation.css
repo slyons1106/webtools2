@@ -1,0 +1,61 @@
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2c3e50; /* Darker, modern background */
+  padding: 0 20px;
+  height: 60px; /* Taller nav bar */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: sticky; /* Make it sticky at the top */
+  top: 0;
+  width: 100%;
+  z-index: 1000; /* Ensure it stays on top */
+  box-sizing: border-box; /* Include padding in width */
+}
+
+.navigation-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 20px; /* Space out navigation items */
+}
+
+.navigation-list li a {
+  color: #ecf0f1; /* Lighter text for contrast */
+  text-decoration: none;
+  padding: 10px 0;
+  display: block;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navigation-list li a:hover {
+  color: #3498db; /* Blue on hover */
+}
+
+.auth-status-container {
+  color: #ecf0f1;
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Space out auth status elements */
+}
+
+.auth-status-container span {
+  font-size: 0.9em;
+}
+
+.auth-status-container button {
+  background-color: #e74c3c; /* Red for logout button */
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: none; /* Remove general button shadow */
+}
+
+.auth-status-container button:hover {
+  background-color: #c0392b; /* Darker red on hover */
+}

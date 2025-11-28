@@ -24,11 +24,13 @@ const LoginPage: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ username, password }),
+        credentials: 'include', // Include cookies in cross-origin requests
       });
 
       if (response.ok) {
         const data = await response.json();
-        auth.login(data.role); // Update context with role
+        auth.login(data.role, data.allowedPages);
+        await auth.checkAuthStatus(); // Re-fetch auth status to ensure all permissions are updated
         navigate('/'); // Redirect to home on successful login
       } else {
         const errorData = await response.json();

@@ -6,6 +6,7 @@ const DATABASE_FILE = './database.sqlite';
 const SALT_ROUNDS = 10;
 
 export async function initializeDatabase() {
+  console.log(`Initializing database at: ${DATABASE_FILE}`); // Log the database file path
   const db = await open({
     filename: DATABASE_FILE,
     driver: sqlite3.Database,
@@ -50,4 +51,14 @@ export async function initializeDatabase() {
   }
 
   return db;
+}
+
+export async function getAllUsers() {
+  const db = await open({
+    filename: DATABASE_FILE,
+    driver: sqlite3.Database,
+  });
+  // Exclude password from the results for security reasons
+  const users = await db.all("SELECT id, username, role, allowedPages FROM users");
+  return users;
 }

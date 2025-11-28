@@ -1,0 +1,148 @@
+.admin-page-container {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+  width: 100%;
+  max-width: 1000px; /* Limit width for better readability */
+  box-sizing: border-box;
+}
+
+.admin-page-container h1,
+.admin-page-container h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.admin-page-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden; /* Ensures rounded corners on table */
+}
+
+.admin-page-container th,
+.admin-page-container td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.admin-page-container th {
+  background-color: #34495e; /* Darker header background */
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+.admin-page-container tr:nth-child(even) {
+  background-color: #f9fbfb; /* Light stripe for even rows */
+}
+
+.admin-page-container tr:hover {
+  background-color: #e8f4fd; /* Highlight on hover */
+}
+
+.admin-page-container td button {
+  padding: 6px 12px;
+  margin-right: 5px;
+  font-size: 0.85em;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  box-shadow: none; /* Override global button shadow */
+}
+
+.admin-page-container td button:last-child {
+  margin-right: 0;
+}
+
+.admin-page-container td button:hover {
+  opacity: 0.9;
+}
+
+.admin-page-container td button.edit-button {
+  background-color: #28a745; /* Green for edit */
+  border-color: #28a745;
+}
+
+.admin-page-container td button.edit-button:hover {
+  background-color: #218838;
+  border-color: #218838;
+}
+
+.admin-page-container td button.save-button {
+  background-color: #007bff; /* Primary blue for save */
+  border-color: #007bff;
+}
+
+.admin-page-container td button.save-button:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.admin-page-container td button.cancel-button {
+  background-color: #dc3545; /* Red for cancel */
+  border-color: #dc3545;
+}
+
+.admin-page-container td button.cancel-button:hover {
+  background-color: #c82333;
+  border-color: #c82333;
+}
+
+.admin-page-container input[type="text"],
+.admin-page-container select {
+  width: auto; /* Adjust width for inline editing */
+  padding: 6px 10px;
+  margin: 0; /* Remove default margins */
+  font-size: 0.9em;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+}
+
+.admin-page-container input[type="text"]:focus,
+.admin-page-container select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.admin-page-container .allowed-pages-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 5px 0;
+  border: 1px solid #e9ecef;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+  padding: 10px;
+}
+
+.admin-page-container .allowed-pages-checkboxes label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85em;
+  color: #343a40;
+  cursor: pointer;
+}
+
+.admin-page-container .allowed-pages-checkboxes input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.admin-page-container p.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 15px;
+  text-align: center;
+}

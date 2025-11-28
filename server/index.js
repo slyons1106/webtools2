@@ -1,5 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcrypt';
@@ -15,6 +16,7 @@ let db; // Database instance
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 // Mock Login Endpoint
 app.post('/api/login', async (req, res) => {

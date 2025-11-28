@@ -3,7 +3,8 @@ import React, { createContext, useState, useEffect, type ReactNode } from 'react
 interface AuthContextType {
   isAuthenticated: boolean;
   role: string | null;
-  login: (newRole: string) => void;
+  allowedPages: string[] | null; // Added allowedPages to context type
+  login: (newRole: string, newAllowedPages: string[]) => void; // Updated login signature
   logout: () => void;
   checkAuthStatus: () => Promise<void>;
 }
@@ -17,6 +18,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [role, setRole] = useState<string | null>(null);
+  const [allowedPages, setAllowedPages] = useState<string[] | null>(null); // New state for allowed pages
   const [loading, setLoading] = useState<boolean>(true); // To prevent flashing content
 
   const checkAuthStatus = async () => {
@@ -24,16 +26,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await fetch('/api/check-auth');
       if (response.ok) {
         const data = await response.json();
+        console.log('checkAuthStatus data:', data); // Log the received data
         setIsAuthenticated(data.isAuthenticated);
         setRole(data.role);
+        setAllowedPages(data.allowedPages); // Set allowed pages from response
       } else {
         setIsAuthenticated(false);
         setRole(null);
+        setAllowedPages(null); // Clear allowed pages on failure
       }
     } catch (error) {
       console.error('Failed to check auth status:', error);
       setIsAuthenticated(false);
       setRole(null);
+      setAllowedPages(null); // Clear allowed pages on error
     } finally {
       setLoading(false);
     }
@@ -43,9 +49,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuthStatus();
   }, []);
 
-  const login = (newRole: string) => {
+  const login = (newRole: string, newAllowedPages: string[]) => {
     setIsAuthenticated(true);
     setRole(newRole);
+    setAllowedPages(newAllowedPages); // Set allowed pages on login
   };
 
   const logout = async () => {
@@ -56,6 +63,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setIsAuthenticated(false);
       setRole(null);
+      setAllowedPages(null); // Clear allowed pages on logout
     }
   };
 
@@ -64,7 +72,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, role, login, logout, checkAuthStatus }}>
+    <AuthContext.Provider value={{ isAuthenticated, role, allowedPages, login, logout, checkAuthStatus }}>
       {children}
     </AuthContext.Provider>
   );
