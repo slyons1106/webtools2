@@ -152,7 +152,7 @@ if __name__ == "__main__":
         send_to_slack(report)
 
     elif "--screen" in sys.argv:
-        print(f"Label Count for {date_arg if date_arg else 'today'}") # Changed message
+        # print(f"Label Count for {date_arg if date_arg else 'today'}") # Changed message - removed as it breaks JSON output
         report = generate_report(date_arg)
         print(report)
 
