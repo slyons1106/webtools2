@@ -148,7 +148,7 @@ if __name__ == "__main__":
         send_to_slack(report)
 
     elif "--screen" in sys.argv:
-        print("Running in screen output mode... (Slack disabled)")
+        print("Label Count for today") # Changed message
         report = generate_report()
         print(report)
 
