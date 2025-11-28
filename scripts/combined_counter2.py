@@ -53,11 +53,17 @@ def get_folder_breakdown(s3_client, bucket_name, base_prefix):
     return breakdown
 
 
-def generate_report():
+def generate_report(report_date_str=None): # Added optional parameter
     s3_client = init_s3_client()
     bucket_name = "pat-labels"
-    selected_date = datetime.now().strftime("%Y/%m/%d")
-    prefix = f"{selected_date}/"
+    
+    if report_date_str:
+        prefix = f"{report_date_str}/"
+        display_date = report_date_str
+    else:
+        selected_date = datetime.now().strftime("%Y/%m/%d")
+        prefix = f"{selected_date}/"
+        display_date = selected_date
 
     # Define the folders to check under the date
     initial_folders = {
@@ -96,7 +102,7 @@ def generate_report():
     }
 
     # Format output
-    output_lines = ["Label Summary:", "-" * 30]
+    output_lines = [f"Label Summary for {display_date}:", "-" * 30]
     for label, count in combined_counts.items():
         output_lines.append(f"{label:<25}: {count}")
 
@@ -127,35 +133,32 @@ def send_to_slack(message):
         print(f"Failed to send message to Slack: {response.status_code} - {response.text}")
 
 
-# Removed scheduling logic as it's not needed for the web-integrated version
-# def job():
-#     print("Generating report...")
-#     report = generate_report()
-#     send_to_slack(report)
-
-# # Schedule for weekdays at 6:00 AM
-# schedule.every().monday.at("06:00").do(job)
-# schedule.every().tuesday.at("06:00").do(job)
-# schedule.every().wednesday.at("06:00").do(job)
-# schedule.every().thursday.at("06:00").do(job)
-# schedule.every().friday.at("06:00").do(job)
-
 # Entry point
 if __name__ == "__main__":
+    date_arg = None
+    if "--date" in sys.argv:
+        try:
+            date_index = sys.argv.index("--date")
+            date_arg = sys.argv[date_index + 1]
+            # Basic validation of date format YYYY/MM/DD
+            datetime.strptime(date_arg, "%Y/%m/%d")
+        except (ValueError, IndexError):
+            print("Error: --date argument requires a date in YYYY/MM/DD format.")
+            sys.exit(1)
+
     if "--test" in sys.argv:
         print("Running in test mode... (Slack enabled)")
-        report = generate_report()
+        report = generate_report(date_arg)
         send_to_slack(report)
 
     elif "--screen" in sys.argv:
-        print("Label Count for today") # Changed message
-        report = generate_report()
+        print(f"Label Count for {date_arg if date_arg else 'today'}") # Changed message
+        report = generate_report(date_arg)
         print(report)
 
     else:
         # If run without arguments, it might be the scheduled version or just a direct execution
         # For the web context, it will always be run with --screen
-        print("Generating report for direct execution or web context...")
-        report = generate_report()
+        print(f"Generating report for {date_arg if date_arg else 'today'} for direct execution or web context...")
+        report = generate_report(date_arg)
         print(report)
-
