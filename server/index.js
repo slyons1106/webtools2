@@ -26,8 +26,8 @@ app.post('/api/login', async (req, res) => {
   if (user && await bcrypt.compare(password, user.password)) {
     // In a real application, you would generate a JWT here
     // For this mock, we'll just set a cookie with the user's role and ID
-    res.cookie('userId', user.id, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
-    res.cookie('role', user.role, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+    res.cookie('userId', user.id, { httpOnly: true, secure: req.secure });
+    res.cookie('role', user.role, { httpOnly: true, secure: req.secure });
     res.status(200).json({ message: 'Login successful', role: user.role });
   } else {
     res.status(401).json({ message: 'Invalid credentials' });
@@ -213,6 +213,53 @@ app.delete('/api/admin/users/:id', authorize(ADMIN_ROLE_LEVEL), async (req, res)
     res.status(500).json({ message: 'Error deleting user' });
   }
 });
+
+// New API endpoint for S3 summary
+import { spawn } from 'child_process';
+
+app.get('/api/s3-summary', authorize('ADMIN'), (req, res) => { // Assuming admin role for S3 access
+  const pythonProcess = spawn('python3', ['./server/s3_utils.py'], {
+    env: {
+      ...process.env,
+      AWS_PROFILE: process.env.AWS_PROFILE || 'default',
+      S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
+      PYTHONUNBUFFERED: '1' // Ensures Python output is unbuffered
+    }
+  });
+
+  let pythonOutput = '';
+  let pythonError = '';
+
+  pythonProcess.stdout.on('data', (data) => {
+    pythonOutput += data.toString();
+  });
+
+  pythonProcess.stderr.on('data', (data) => {
+    pythonError += data.toString();
+  });
+
+  pythonProcess.on('close', (code) => {
+    if (code !== 0) {
+      console.error(`Python script exited with code ${code}: ${pythonError}`);
+      return res.status(500).json({ message: 'Failed to get S3 summary', error: pythonError });
+    }
+
+    try {
+      // Assuming Python script prints JSON directly to stdout
+      const result = JSON.parse(pythonOutput);
+      res.status(200).json(result);
+    } catch (parseError) {
+      console.error(`Failed to parse Python script output: ${parseError}. Output: ${pythonOutput}. Error: ${pythonError}`);
+      res.status(500).json({ message: 'Failed to parse S3 summary data', error: parseError.message, pythonOutput: pythonOutput, pythonError: pythonError });
+    }
+  });
+
+  pythonProcess.on('error', (err) => {
+    console.error('Failed to start Python child process:', err);
+    res.status(500).json({ message: 'Failed to start S3 summary process', error: err.message });
+  });
+});
+
 
 // Production-specific logic
 if (process.env.NODE_ENV === 'production') {
