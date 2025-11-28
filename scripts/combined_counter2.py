@@ -6,7 +6,9 @@ import time
 import requests
 import sys
 
+import os
 # Slack webhook URL
+SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL")
 
 
 def init_s3_client():
