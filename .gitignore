@@ -16,3 +16,8 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.DS_Store
+database.sqlite
+label.txt
+.aider*
+python_ref_scripts/

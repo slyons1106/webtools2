@@ -1,71 +1,102 @@
-import { Routes, Route, Link } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import AdminPage from './pages/AdminPage';
-import LoginPage from './pages/LoginPage';
-import { AuthProvider, AuthContext } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import { useContext } from 'react';
-import './App.css';
-
-const AuthStatus: React.FC = () => {
-  const auth = useContext(AuthContext);
-
-  if (!auth) {
-    throw new Error('AuthContext must be used within an AuthProvider');
-  }
-
-  const handleLogout = () => {
-    auth.logout();
-  };
-
-  return (
-    <div>
-      {auth.isAuthenticated ? (
-        <>
-          <span>Welcome, {auth.role}!</span>
-          <button onClick={handleLogout}>Logout</button>
-        </>
-      ) : (
-        <span>You are not logged in.</span>
-      )}
-    </div>
-  );
-};
-
-function App() {
-  return (
-    <AuthProvider>
-      <div className="App">
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/admin">Admin</Link>
-            </li>
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
-          </ul>
-          <AuthStatus />
-        </nav>
-
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute adminOnly={true}>
-                <AdminPage />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </div>
-    </AuthProvider>
-  );
-}
-
+import { Routes, Route } from 'react-router-dom';                                                
+import HomePage from './pages/HomePage';                                                         
+import AdminPage from './pages/AdminPage';                                                       
+import LoginPage from './pages/LoginPage';                                                       
+import Page1 from './pages/Page1';                                                               
+import Page2 from './pages/Page2';                                                               
+import Page3 from './pages/Page3';                                                               
+import Page4 from './pages/Page4';                                                               
+import Page5 from './pages/Page5';                                                               
+import Page6 from './pages/Page6';                                                               
+import S3SummaryPage from './pages/S3SummaryPage';                                               
+import LabelSummaryPage from './pages/LabelSummaryPage';                                         
+import ProtectedRoute from './components/ProtectedRoute';                                        
+import Navigation from './components/Navigation'; // Import the new Navigation component         
+import './App.css';                                                                              
+                                                                                                 
+function App() {                                                                                 
+  return (                                                                                       
+    <div className="App">                                                                        
+      <Navigation /> {/* Render the Navigation component */}                                     
+                                                                                                 
+      <Routes>                                                                                   
+        <Route path="/" element={<HomePage />} />                                                
+        <Route path="/login" element={<LoginPage />} />                                          
+        <Route                                                                                   
+          path="/admin"                                                                          
+          element={                                                                              
+            <ProtectedRoute adminOnly={true}>                                                    
+              <AdminPage />                                                                      
+            </ProtectedRoute>                                                                    
+          }                                                                                      
+        />                                                                                       
+        <Route                                                                                   
+          path="/s3-summary"                                                                     
+          element={                                                                              
+            <ProtectedRoute adminOnly={true}>                                                    
+              <S3SummaryPage />                                                                  
+            </ProtectedRoute>                                                                    
+          }                                                                                      
+        />                                                                                       
+        <Route                                                                                   
+          path="/label-summary"                                                                  
+          element={                                                                              
+            <ProtectedRoute adminOnly={true}>                                                    
+              <LabelSummaryPage />                                                               
+            </ProtectedRoute>                                                                    
+          }                                                                                      
+        />                                                                                       
+        <Route                                                                                   
+          path="/page1"                                                                          
+          element={                                                                              
+            <ProtectedRoute>                                                                     
+              <Page1 />                                                                          
+            </ProtectedRoute>                                                                    
+          }                                                                                      
+        />                                                                                       
+        <Route                                                                                   
+          path="/page2"                                                                          
+          element={                                                                              
+            <ProtectedRoute>                                                                     
+              <Page2 />                                                                          
+            </ProtectedRoute>                                                                    
+          }                                                                                      
+        />                                                                                       
+        <Route                                                                                   
+          path="/page3"                                                                          
+          element={                                                                              
+            <ProtectedRoute>                                                                     
+              <Page3 />                                                                          
+            </ProtectedRoute>                                                                    
+          }                                                                                      
+        />                                                                                       
+        <Route                                                                                   
+          path="/page4"                                                                          
+          element={                                                                              
+            <ProtectedRoute adminOnly={true}>                                                    
+              <Page4 />                                                                          
+            </ProtectedRoute>                                                                    
+          }                                                                                      
+        />                                                                                       
+        <Route                                                                                   
+          path="/page5"                                                                          
+          element={                                                                              
+            <ProtectedRoute adminOnly={true}>                                                    
+              <Page5 />                                                                          
+            </ProtectedRoute>                                                                    
+          }                                                                                      
+        />                                                                                       
+        <Route                                                                                   
+          path="/page6"                                                                          
+          element={                                                                              
+            <ProtectedRoute adminOnly={true}>                                                    
+              <Page6 />                                                                          
+            </ProtectedRoute>                                                                    
+          }                                                                                      
+        />                                                                                       
+      </Routes>                                                                                  
+    </div>                                                                                       
+  );                                                                                             
+}                                                                                                
+                                                                                                 
 export default App;
