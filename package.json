@@ -5,7 +5,7 @@
   "main": "server/index.js",
   "type": "module",
   "scripts": {
-    "start": "node server/index.js",
+    "start": "node server/index.js > logs/server.log 2> logs/server.err",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "cd client && npm install"
   },

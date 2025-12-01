@@ -22,31 +22,30 @@ function App() {
       <Routes>                                                                                   
         <Route path="/" element={<HomePage />} />                                                
         <Route path="/login" element={<LoginPage />} />                                          
-        <Route                                                                                   
-          path="/admin"                                                                          
-          element={                                                                              
-            <ProtectedRoute adminOnly={true}>                                                    
-              <AdminPage />                                                                      
-            </ProtectedRoute>                                                                    
-          }                                                                                      
-        />                                                                                       
-        <Route                                                                                   
-          path="/s3-summary"                                                                     
-          element={                                                                              
-            <ProtectedRoute adminOnly={true}>                                                    
-              <S3SummaryPage />                                                                  
-            </ProtectedRoute>                                                                    
-          }                                                                                      
-        />                                                                                       
-        <Route                                                                                   
-          path="/label-summary"                                                                  
-          element={                                                                              
-            <ProtectedRoute adminOnly={true}>                                                    
-              <LabelSummaryPage />                                                               
-            </ProtectedRoute>                                                                    
-          }                                                                                      
-        />                                                                                       
-        <Route                                                                                   
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute adminOnly={true}>
+                      <AdminPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/s3-summary"
+                  element={
+                    <ProtectedRoute>
+                      <S3SummaryPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/label-summary"
+                  element={
+                    <ProtectedRoute>
+                      <LabelSummaryPage />
+                    </ProtectedRoute>
+                  }
+                />        <Route                                                                                   
           path="/page1"                                                                          
           element={                                                                              
             <ProtectedRoute>                                                                     

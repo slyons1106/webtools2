@@ -16,6 +16,8 @@ const ALL_POSSIBLE_PAGES = [
   '/page4',
   '/page5',
   '/page6',
+  '/s3-summary', // Added S3 Summary page
+  '/label-summary', // Added Label Summary page
 ];
 
 const AdminPage: React.FC = () => {
@@ -26,7 +28,15 @@ const AdminPage: React.FC = () => {
   const [editedUsername, setEditedUsername] = useState<string>('');
   const [editedRole, setEditedRole] = useState<string>('');
   const [editedAllowedPages, setEditedAllowedPages] = useState<string[]>([]);
+  const [editedPassword, setEditedPassword] = useState<string>(''); // New state for password
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  // State for Create User form
+  const [showCreateUserForm, setShowCreateUserForm] = useState<boolean>(false);
+  const [newUsername, setNewUsername] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [newRole, setNewRole] = useState<string>('USER'); // Default role
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -54,6 +64,7 @@ const AdminPage: React.FC = () => {
     setEditedUsername(user.username);
     setEditedRole(user.role);
     setEditedAllowedPages(user.allowedPages || []);
+    setEditedPassword(''); // Clear password when starting edit
     setSaveError(null);
   };
 
@@ -74,6 +85,7 @@ const AdminPage: React.FC = () => {
           username: editedUsername,
           role: editedRole,
           allowedPages: editedAllowedPages,
+          ...(editedPassword && { password: editedPassword }), // Conditionally add password
         }),
       });
 
@@ -95,6 +107,45 @@ const AdminPage: React.FC = () => {
     );
   };
 
+  const handleCreateUser = async () => {
+    setCreateError(null);
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: newUsername,
+          password: newPassword,
+          role: newRole,
+          allowedPages: [], // New users start with no specific page access, can be edited later
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      setShowCreateUserForm(false);
+      setNewUsername('');
+      setNewPassword('');
+      setNewRole('USER');
+      fetchUsers(); // Refresh the user list
+    } catch (e: any) {
+      setCreateError(e.message);
+    }
+  };
+
+  const handleCancelCreate = () => {
+    setShowCreateUserForm(false);
+    setNewUsername('');
+    setNewPassword('');
+    setNewRole('USER');
+    setCreateError(null);
+  };
+
   if (loading) {
     return <div>Loading users...</div>;
   }
@@ -107,6 +158,41 @@ const AdminPage: React.FC = () => {
     <div className="admin-page-container">
       <h1>Welcome to the Admin Page!</h1>
       <h2>User Management</h2>
+      <button className="create-user-button" onClick={() => setShowCreateUserForm(true)}>Create New User</button>
+
+      {showCreateUserForm && (
+        <div className="create-user-form">
+          <h3>Create New User</h3>
+          {createError && <p className="error-message">{createError}</p>}
+          <div>
+            <label>Username:</label>
+            <input
+              type="text"
+              value={newUsername}
+              onChange={(e) => setNewUsername(e.target.value)}
+            />
+          </div>
+          <div>
+            <label>Password:</label>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+          </div>
+          <div>
+            <label>Role:</label>
+            <select value={newRole} onChange={(e) => setNewRole(e.target.value)}>
+              <option value="USER">USER</option>
+              <option value="ADMIN">ADMIN</option>
+              <option value="VIEWER">VIEWER</option>
+            </select>
+          </div>
+          <button className="save-button" onClick={handleCreateUser}>Create User</button>
+          <button className="cancel-button" onClick={handleCancelCreate}>Cancel</button>
+        </div>
+      )}
+
       {saveError && <p className="error-message">Error saving user: {saveError}</p>}
       {users.length === 0 ? (
         <p>No users found.</p>
@@ -144,6 +230,7 @@ const AdminPage: React.FC = () => {
                     >
                       <option value="USER">USER</option>
                       <option value="ADMIN">ADMIN</option>
+                      <option value="VIEWER">VIEWER</option>
                     </select>
                   ) : (
                     user.role
@@ -173,6 +260,12 @@ const AdminPage: React.FC = () => {
                 <td>
                   {editingUserId === user.id ? (
                     <>
+                      <input
+                        type="password"
+                        placeholder="New Password (leave blank to keep current)"
+                        value={editedPassword}
+                        onChange={(e) => setEditedPassword(e.target.value)}
+                      />
                       <button className="save-button" onClick={() => handleSaveEdit(user.id)}>Save</button>
                       <button className="cancel-button" onClick={handleCancelEdit}>Cancel</button>
                     </>

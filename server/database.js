@@ -45,7 +45,7 @@ export async function initializeDatabase() {
       'user',
       hashedPassword,
       'USER',
-      JSON.stringify(['/page1', '/page2', '/page3', '/home']) // User has access to specific pages
+      JSON.stringify(['/page1', '/page2', '/page3', '/home', '/s3-summary', '/label-summary']) // User has access to specific pages
     );
     console.log('Default user created.');
   }

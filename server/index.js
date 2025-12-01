@@ -41,8 +41,7 @@ app.get('/api/check-auth', async (req, res) => {
     const user = await db.get("SELECT id, username, role, allowedPages FROM users WHERE id = ?", 
 userId);                                                                                         
     if (user) {                                                                                  
-      res.status(200).json({ isAuthenticated: true, role: user.role, username: user.username, all
-owedPages: JSON.parse(user.allowedPages) });                                                     
+      res.status(200).json({ isAuthenticated: true, role: user.role, username: user.username, allowedPages: JSON.parse(user.allowedPages) });                                                     
     } else {                                                                                     
       res.clearCookie('userId');                                                                 
       res.clearCookie('role');                                                                   
@@ -259,8 +258,7 @@ app.get('/api/s3-summary', authorize('USER', '/s3-summary'), (req, res) => { // 
     } catch (parseError) {                                                                       
       console.error(`Failed to parse Python script output: ${parseError}. Output: ${pythonOutput}
 . Error: ${pythonError}`);                                                                       
-      res.status(500).json({ message: 'Failed to parse S3 summary data', error: parseError.messag
-e, pythonOutput: pythonOutput, pythonError: pythonError });                                      
+      res.status(500).json({ message: 'Failed to parse S3 summary data', error: parseError.message, pythonOutput: pythonOutput, pythonError: pythonError });                                      
     }                                                                                            
   });                                                                                            
                                                                                                  
@@ -285,8 +283,7 @@ app.get('/api/label-summary', authorize('USER', '/label-summary'), async (req, r
   const runLabelScript = (dateStr) => {                                                          
     return new Promise((resolve, reject) => {                                                    
       const args = dateStr ? ['--screen', dateStr] : ['--screen'];                               
-      const pythonProcess = spawn('./venv_s3/bin/python', ['./server/python_ref_scripts/label_sum
-mary/combined_counter2.py', ...args], {                                                          
+            const pythonProcess = spawn('./venv_s3/bin/python', ['./server/python_ref_scripts/label_summary/combined_counter2.py', ...args], {                                                          
         env: {                                                                                   
           ...process.env,                                                                        
           PYTHONUNBUFFERED: '1'                                                                  
