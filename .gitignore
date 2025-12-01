@@ -4,8 +4,10 @@
 
 # Build artifacts
 /client/dist
+/client/.vite/
 
 # Logs
+/logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -20,4 +22,5 @@ yarn-error.log*
 database.sqlite
 label.txt
 .aider*
+old_package-lock.json
 python_ref_scripts/
