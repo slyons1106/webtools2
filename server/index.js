@@ -269,73 +269,157 @@ app.get('/api/s3-summary', authorize('USER', '/s3-summary'), (req, res) => { // 
 });                                                                                              
                                                                                                  
 app.get('/api/label-summary', authorize('USER', '/label-summary'), async (req, res) => {
-  const getNextWorkingDay = (date) => {                                                          
-    const nextDay = new Date(date);                                                              
-    nextDay.setDate(date.getDate() + 1);                                                         
-    if (nextDay.getDay() === 6) { // Saturday                                                    
-      nextDay.setDate(nextDay.getDate() + 2);                                                    
-    } else if (nextDay.getDay() === 0) { // Sunday                                               
-      nextDay.setDate(nextDay.getDate() + 1);                                                    
-    }                                                                                            
-    return nextDay;                                                                              
-  };                                                                                             
-                                                                                                 
-  const runLabelScript = (dateStr) => {                                                          
-    return new Promise((resolve, reject) => {                                                    
-      const args = dateStr ? ['--screen', dateStr] : ['--screen'];                               
-            const pythonProcess = spawn('./venv_s3/bin/python', ['./server/python_ref_scripts/label_summary/combined_counter2.py', ...args], {                                                          
-        env: {                                                                                   
-          ...process.env,                                                                        
-          PYTHONUNBUFFERED: '1'                                                                  
-        }                                                                                        
-      });                                                                                        
-                                                                                                 
-      let pythonOutput = '';                                                                     
-      let pythonError = '';                                                                      
-                                                                                                 
-      pythonProcess.stdout.on('data', (data) => {                                                
-        pythonOutput += data.toString();                                                         
-      });                                                                                        
-                                                                                                 
-      pythonProcess.stderr.on('data', (data) => {                                                
-        pythonError += data.toString();                                                          
-      });                                                                                        
-                                                                                                 
-      pythonProcess.on('close', (code) => {                                                      
-        if (code !== 0) {                                                                        
-          console.error(`Python script exited with code ${code}: ${pythonError}`);               
-          reject({ message: 'Failed to get label summary', error: pythonError });                
-        } else {                                                                                 
-          resolve(pythonOutput);                                                                 
-        }                                                                                        
-      });                                                                                        
-                                                                                                 
-      pythonProcess.on('error', (err) => {                                                       
-        console.error('Failed to start Python child process:', err);                             
-        reject({ message: 'Failed to start label summary process', error: err.message });        
-      });                                                                                        
-    });                                                                                          
-  };                                                                                             
-                                                                                                 
-  try {                                                                                          
-    const today = new Date();                                                                    
-    const nextWorkingDay = getNextWorkingDay(today);                                             
-                                                                                                 
-    const todayStr = today.toISOString().split('T')[0];                                          
-    const nextWorkingDayStr = nextWorkingDay.toISOString().split('T')[0];                        
-                                                                                                 
-    const [todayReport, nextDayReport] = await Promise.all([                                     
-      runLabelScript(todayStr),                                                                  
-      runLabelScript(nextWorkingDayStr)                                                          
-    ]);                                                                                          
-                                                                                                 
-    res.status(200).json({ todayReport, nextDayReport });                                        
-                                                                                                 
-  } catch (error) {                                                                              
-    res.status(500).json(error);                                                                 
-  }                                                                                              
-});                                                                                              
-                                                                                                 
+  const getNextWorkingDay = (date) => {
+    const nextDay = new Date(date);
+    nextDay.setDate(date.getDate() + 1);
+    if (nextDay.getDay() === 6) { // Saturday
+      nextDay.setDate(nextDay.getDate() + 2);
+    } else if (nextDay.getDay() === 0) { // Sunday
+      nextDay.setDate(nextDay.getDate() + 1);
+    }
+    return nextDay;
+  };
+
+  const runLabelScript = (dateStr) => {
+    return new Promise((resolve, reject) => {
+      const args = dateStr ? ['--screen', dateStr] : ['--screen'];
+            const pythonProcess = spawn('./venv_s3/bin/python', ['./server/python_ref_scripts/label_summary/combined_counter2.py', ...args], {
+        env: {
+          ...process.env,
+          PYTHONUNBUFFERED: '1'
+        }
+      });
+
+      let pythonOutput = '';
+      let pythonError = '';
+
+      pythonProcess.stdout.on('data', (data) => {
+        pythonOutput += data.toString();
+      });
+
+      pythonProcess.stderr.on('data', (data) => {
+        pythonError += data.toString();
+      });
+
+      pythonProcess.on('close', (code) => {
+        if (code !== 0) {
+          console.error(`Python script exited with code ${code}: ${pythonError}`);
+          reject({ message: 'Failed to get label summary', error: pythonError });
+        } else {
+          resolve(pythonOutput);
+        }
+      });
+
+      pythonProcess.on('error', (err) => {
+        console.error('Failed to start Python child process:', err);
+        reject({ message: 'Failed to start label summary process', error: err.message });
+      });
+    });
+  };
+
+  try {
+    const today = new Date();
+    const nextWorkingDay = getNextWorkingDay(today);
+
+    const todayStr = today.toISOString().split('T')[0];
+    const nextWorkingDayStr = nextWorkingDay.toISOString().split('T')[0];
+
+    const [todayReport, nextDayReport] = await Promise.all([
+      runLabelScript(todayStr),
+      runLabelScript(nextWorkingDayStr)
+    ]);
+
+    res.status(200).json({ todayReport, nextDayReport });
+
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// New API endpoints for S3 Downloader functionality
+const executePythonScript = (scriptPath, args, req, res) => {
+  return new Promise((resolve, reject) => {
+    const { profile, region } = req.query; // Get profile and region from query parameters
+    const env = {
+      ...process.env,
+      PYTHONUNBUFFERED: '1'
+    };
+    if (profile) env.AWS_PROFILE = profile;
+    if (region) env.AWS_REGION = region;
+
+    const pythonProcess = spawn('./venv_s3/bin/python', [scriptPath, ...args], { env });
+
+    let pythonOutput = '';
+    let pythonError = '';
+
+    pythonProcess.stdout.on('data', (data) => {
+      pythonOutput += data.toString();
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+      pythonError += data.toString();
+    });
+
+    pythonProcess.on('close', (code) => {
+      if (code !== 0) {
+        console.error(`Python script exited with code ${code}: ${pythonError}`);
+        return reject({ status: 500, message: 'Failed to execute Python script', error: pythonError });
+      }
+
+      try {
+        const result = JSON.parse(pythonOutput);
+        resolve({ status: 200, data: result });
+      } catch (parseError) {
+        console.error(`Failed to parse Python script output: ${parseError}. Output: ${pythonOutput}. Error: ${pythonError}`);
+        reject({ status: 500, message: 'Failed to parse Python script output', error: parseError.message, pythonOutput: pythonOutput, pythonError: pythonError });
+      }
+    });
+
+    pythonProcess.on('error', (err) => {
+      console.error('Failed to start Python child process:', err);
+      reject({ status: 500, message: 'Failed to start Python process', error: err.message });
+    });
+  });
+};
+
+app.get('/api/s3-downloader/list', authorize('USER', '/s3-downloader'), async (req, res) => {
+  const { bucket, prefix = "" } = req.query;
+  if (!bucket) {
+    return res.status(400).json({ message: 'Bucket is required' });
+  }
+  try {
+    const { status, data } = await executePythonScript('./server/s3_downloader_api.py', ['list', bucket, prefix], req, res);
+    res.status(status).json(data);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message, error: error.error, pythonOutput: error.pythonOutput, pythonError: error.pythonError });
+  }
+});
+
+app.get('/api/s3-downloader/search', authorize('USER', '/s3-downloader'), async (req, res) => {
+  const { bucket, prefix = "", term } = req.query;
+  if (!bucket || !term) {
+    return res.status(400).json({ message: 'Bucket and search term are required' });
+  }
+  try {
+    const { status, data } = await executePythonScript('./server/s3_downloader_api.py', ['search', bucket, prefix, term], req, res);
+    res.status(status).json(data);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message, error: error.error, pythonOutput: error.pythonOutput, pythonError: error.pythonError });
+  }
+});
+
+app.get('/api/s3-downloader/image', authorize('USER', '/s3-downloader'), async (req, res) => {
+  const { bucket, key } = req.query;
+  if (!bucket || !key) {
+    return res.status(400).json({ message: 'Bucket and key are required' });
+  }
+  try {
+    const { status, data } = await executePythonScript('./server/s3_downloader_api.py', ['get_image', bucket, key], req, res);
+    res.status(status).json(data);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message, error: error.error, pythonOutput: error.pythonOutput, pythonError: error.pythonError });
+  }
+});                                                                                                 
                                                                                                  
                                                                                                  
 // Production-specific logic                                                                     

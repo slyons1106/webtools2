@@ -9,19 +9,20 @@ import Page4 from './pages/Page4';
 import Page5 from './pages/Page5';                                                               
 import Page6 from './pages/Page6';                                                               
 import S3SummaryPage from './pages/S3SummaryPage';                                               
-import LabelSummaryPage from './pages/LabelSummaryPage';                                         
-import ProtectedRoute from './components/ProtectedRoute';                                        
-import Navigation from './components/Navigation'; // Import the new Navigation component         
-import './App.css';                                                                              
-                                                                                                 
-function App() {                                                                                 
-  return (                                                                                       
-    <div className="App">                                                                        
-      <Navigation /> {/* Render the Navigation component */}                                     
-                                                                                                 
-      <Routes>                                                                                   
-        <Route path="/" element={<HomePage />} />                                                
-        <Route path="/login" element={<LoginPage />} />                                          
+import LabelSummaryPage from './pages/LabelSummaryPage';
+import S3DownloaderPage from './pages/S3DownloaderPage'; // Import the new S3DownloaderPage
+import ProtectedRoute from './components/ProtectedRoute';
+import Navigation from './components/Navigation'; // Import the new Navigation component
+import './App.css';
+
+function App() {
+  return (
+    <div className="App">
+      <Navigation /> {/* Render the Navigation component */}
+
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
                 <Route
                   path="/admin"
                   element={
@@ -43,6 +44,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <LabelSummaryPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/s3-downloader" // New route for S3DownloaderPage
+                  element={
+                    <ProtectedRoute>
+                      <S3DownloaderPage />
                     </ProtectedRoute>
                   }
                 />        <Route                                                                                   

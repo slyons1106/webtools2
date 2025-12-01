@@ -18,6 +18,7 @@ const ALL_POSSIBLE_PAGES = [
   '/page6',
   '/s3-summary', // Added S3 Summary page
   '/label-summary', // Added Label Summary page
+  '/s3-downloader', // Added S3 Downloader page
 ];
 
 const AdminPage: React.FC = () => {

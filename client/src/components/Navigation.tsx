@@ -62,6 +62,11 @@ const Navigation: React.FC = () => {
                   <li>
                     <Link to="/label-summary">Label Summary</Link>
                   </li>
+                )}
+                {canAccess('/s3-downloader') && (
+                  <li>
+                    <Link to="/s3-downloader">S3 Downloader</Link>
+                  </li>
                 )}        {canAccess('/page1') && (                                                                
           <li>                                                                                   
             <Link to="/page1">Page 1</Link>                                                      
