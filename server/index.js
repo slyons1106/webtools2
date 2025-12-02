@@ -305,15 +305,17 @@ app.get('/api/label-summary', authorize('USER', '/label-summary'), async (req, r
 
       pythonProcess.on('close', (code) => {
         if (code !== 0) {
-          console.error(`Python script exited with code ${code}: ${pythonError}`);
-          reject({ message: 'Failed to get label summary', error: pythonError });
+          console.error(`runLabelScript: Python script exited with code ${code}.`);
+          console.error(`runLabelScript: Python stdout: \n${pythonOutput}`);
+          console.error(`runLabelScript: Python stderr: \n${pythonError}`);
+          reject({ message: 'Failed to get label summary', error: pythonError, pythonOutput: pythonOutput });
         } else {
           resolve(pythonOutput);
         }
       });
 
       pythonProcess.on('error', (err) => {
-        console.error('Failed to start Python child process:', err);
+        console.error(`runLabelScript: Failed to start Python child process: ${err.message}`);
         reject({ message: 'Failed to start label summary process', error: err.message });
       });
     });
