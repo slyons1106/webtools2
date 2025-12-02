@@ -1,11 +1,7 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
-# This appends the project root to sys.path
-
 import boto3
 from datetime import datetime, timedelta
 from math import ceil
+import sys
 import requests # Keeping requests just in case it was used for something else, although not for
 from server import settings # Assuming settings will be managed locally for non-secret vars
 
