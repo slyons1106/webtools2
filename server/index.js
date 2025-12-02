@@ -283,11 +283,11 @@ app.get('/api/label-summary', authorize('USER', '/label-summary'), async (req, r
   const runLabelScript = (dateStr) => {
     return new Promise((resolve, reject) => {
       const args = dateStr ? ['--screen', dateStr] : ['--screen'];
-            const pythonProcess = spawn('./venv_s3/bin/python', ['./server/python_ref_scripts/label_summary/combined_counter2.py', ...args], {
+            const pythonProcess = spawn('./venv_s3/bin/python', ['server/python_ref_scripts/label_summary/combined_counter2.py', ...args], {
+        cwd: process.cwd(), // Set working directory to project root
         env: {
           ...process.env,
           PYTHONUNBUFFERED: '1',
-          PYTHONPATH: __dirname // Add the server directory to PYTHONPATH
         }
       });
 
@@ -299,6 +299,7 @@ app.get('/api/label-summary', authorize('USER', '/label-summary'), async (req, r
       });
 
       pythonProcess.stderr.on('data', (data) => {
+        console.error(`Python stderr: ${data.toString()}`); // Log stderr directly
         pythonError += data.toString();
       });
 
