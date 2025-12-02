@@ -287,7 +287,7 @@ app.get('/api/label-summary', authorize('USER', '/label-summary'), async (req, r
         env: {
           ...process.env,
           PYTHONUNBUFFERED: '1',
-          PYTHONPATH: process.cwd() // Add project root to PYTHONPATH
+          PYTHONPATH: __dirname // Add the server directory to PYTHONPATH
         }
       });
 
