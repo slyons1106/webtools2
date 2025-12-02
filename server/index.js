@@ -286,7 +286,8 @@ app.get('/api/label-summary', authorize('USER', '/label-summary'), async (req, r
             const pythonProcess = spawn('./venv_s3/bin/python', ['./server/python_ref_scripts/label_summary/combined_counter2.py', ...args], {
         env: {
           ...process.env,
-          PYTHONUNBUFFERED: '1'
+          PYTHONUNBUFFERED: '1',
+          PYTHONPATH: process.cwd() // Add project root to PYTHONPATH
         }
       });
 
