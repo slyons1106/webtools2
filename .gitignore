@@ -23,4 +23,3 @@ database.sqlite
 label.txt
 .aider*
 old_package-lock.json
-python_ref_scripts/
